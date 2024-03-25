@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">DrivingApp</string>
+    <string-array name="filter_options">
+        <item>Date</item>
+        <item>Driving Time</item>
+        <item>Distance</item>
+        <item>Average Speed</item>
+        <item>Safety Score</item>
+    </string-array>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyD9D9FBU54v8Xz_MweaCGj1F86sem5ai0s</string>
+</resources>
