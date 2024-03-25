@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -17,6 +19,20 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        val keystoreFile = project.rootProject.file("secrets.properties")
+        val properties = Properties()
+        properties.load(keystoreFile.inputStream())
+
+        val apiKey = properties.getProperty("MAPS_API_KEY") ?: ""
+
+            buildConfigField(
+                type = "String",
+                name = "MAPS_API_KEY",
+                value = apiKey
+            )
+
+        manifestPlaceholders["GOOGLE_KEY"] = apiKey
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
