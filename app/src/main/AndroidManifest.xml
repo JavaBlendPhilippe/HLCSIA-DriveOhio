@@ -5,7 +5,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
 
     <application
@@ -20,21 +22,39 @@
         tools:targetApi="34">
         <activity
             android:launchMode="singleTask"
-            android:name=".ui.MainActivity"
+            android:name=".ui.activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+
+        <activity
+            android:name=".ui.activities.DriveActivity"
+            android:exported="true"
+            android:label="Driving Activity">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        
+        <service
+            android:name=".location.ForegroundTrackingService"
+            android:foregroundServiceType="location"
+            android:exported="false">
+
+        </service>
+
+
+
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="GOOGLE_KEY" />
+            android:value="${MAPS_API_KEY}" />
 
         <uses-library
             android:name="org.apache.http.legacy"

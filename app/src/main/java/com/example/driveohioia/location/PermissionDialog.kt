@@ -1,13 +1,10 @@
-package com.example.driveohioia
+package com.example.driveohioia.location
 
-import android.Manifest
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import java.security.Permission
 
 @Composable
 fun PermissionDialog(
@@ -73,7 +69,7 @@ interface PermissionTextProvider{
     fun getDescription(isPermanentlyDeclined: Boolean): String
 }
 
-class CoarseLocationPermissionTextProvider: PermissionTextProvider{
+class CoarseLocationPermissionTextProvider: PermissionTextProvider {
     override fun getDescription(isPermanentlyDeclined: Boolean): String {
         return if(isPermanentlyDeclined){
             "Coarse Location - It seems you permanently declined Coarse Location Permissions" +
@@ -85,7 +81,7 @@ class CoarseLocationPermissionTextProvider: PermissionTextProvider{
     }
 }
 
-class FineLocationPermissionTextProvider: PermissionTextProvider{
+class FineLocationPermissionTextProvider: PermissionTextProvider {
     override fun getDescription(isPermanentlyDeclined: Boolean): String {
         return if(isPermanentlyDeclined){
             " Fine Location - It seems you permanently declined Fine Location Permissions" +
@@ -97,7 +93,7 @@ class FineLocationPermissionTextProvider: PermissionTextProvider{
     }
 }
 
-class BackgroundLocationPermissionTextProvider: PermissionTextProvider{
+class BackgroundLocationPermissionTextProvider: PermissionTextProvider {
     override fun getDescription(isPermanentlyDeclined: Boolean): String {
         return if(isPermanentlyDeclined){
             "Background Location - It seems you permanently declined Background Location Permissions" +

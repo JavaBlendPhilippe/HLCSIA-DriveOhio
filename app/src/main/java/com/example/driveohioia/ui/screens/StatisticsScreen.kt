@@ -24,6 +24,7 @@ fun ConstraintLayoutStatistics () {
         color = MaterialTheme.colorScheme.background
     ) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+            // References for the Constraint Layout
             val (distanceTextInfo, distanceTextValue) = createRefs()
             val (totalTimeInfo, totalTimeValue) = createRefs()
             val (safetyScoreInfo, safetyScoreValue) = createRefs()

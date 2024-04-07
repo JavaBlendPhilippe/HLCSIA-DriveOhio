@@ -1,4 +1,4 @@
-package com.example.driveohioia.ui
+package com.example.driveohioia.ui.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -31,35 +31,44 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.data.UiToolingDataApi
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.driveohioia.BackgroundLocationPermissionTextProvider
-import com.example.driveohioia.BottomNavItem
-import com.example.driveohioia.CoarseLocationPermissionTextProvider
-import com.example.driveohioia.FineLocationPermissionTextProvider
+import androidx.navigation.findNavController
+import com.example.driveohioia.location.BackgroundLocationPermissionTextProvider
+import com.example.driveohioia.ui.navigation.BottomNavItem
+import com.example.driveohioia.location.CoarseLocationPermissionTextProvider
+import com.example.driveohioia.location.FineLocationPermissionTextProvider
 import com.example.driveohioia.ui.theme.AppTheme
-import com.example.driveohioia.Navigation
-import com.example.driveohioia.PermissionDialog
-import com.example.driveohioia.Screen
+import com.example.driveohioia.ui.navigation.Navigation
+import com.example.driveohioia.location.PermissionDialog
+import com.example.driveohioia.ui.navigation.Screen
 import com.example.driveohioia.db.DriveDAO
+import com.example.driveohioia.other.Constants
+import com.example.driveohioia.other.Constants.ACTION_SHOW_LIVE_DRIVE_SCREEN
 import com.example.driveohioia.ui.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+
+/*
+    The main activity, where all the major actions take place. This is where the permissions are
+    requested, navigation is set up, and composables that appear on other screens are housed.
+
+    The major screens are composables of this activity that are housed in different files.
+
+ */
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -73,19 +82,23 @@ class MainActivity : ComponentActivity() {
         android.Manifest.permission.ACCESS_BACKGROUND_LOCATION,
     )
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    @OptIn(UiToolingDataApi::class)
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                val viewModel = viewModel<MainViewModel>()
-                val dialogQueue = viewModel.visiblePermissionDialogQueue
-
+                // Handles Permission Requests
+                // Must be directly in Main Activity block because it inherits important things
+                val mainViewModel = viewModel<MainViewModel>()
+                val dialogQueue = mainViewModel.visiblePermissionDialogQueue
+                // Creates a launcher that can request the permissions
                 val multiplePermissionResultLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.RequestMultiplePermissions(),
                     onResult = { perms ->
+                        // Checks which permissions aren't granted
                         permissionsToRequest.forEach { permission ->
-                            viewModel.onPermissionResult(
+                            mainViewModel.onPermissionResult(
                                 permission = permission,
                                 isGranted = perms[permission] == true
                             )
@@ -94,14 +107,16 @@ class MainActivity : ComponentActivity() {
                     },
                 )
 
+                // Launches permission request launcher
                 SideEffect {
                     multiplePermissionResultLauncher.launch(permissionsToRequest)
                 }
-
+                // Dialog shown with request from app to ask for permissions
                 dialogQueue
                     .forEach { permission ->
                         PermissionDialog(
                             permissionTextProvider = when (permission) {
+                                // Permissions that need to be requested, and their text providers
                                 Manifest.permission.ACCESS_COARSE_LOCATION -> CoarseLocationPermissionTextProvider()
                                 Manifest.permission.ACCESS_FINE_LOCATION -> FineLocationPermissionTextProvider()
                                 Manifest.permission.ACCESS_BACKGROUND_LOCATION -> BackgroundLocationPermissionTextProvider()
@@ -110,27 +125,37 @@ class MainActivity : ComponentActivity() {
                             isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
                                 permission
                             ),
-                            onDismiss = viewModel::dismissDialog,
+                            onDismiss = mainViewModel::dismissDialog,
                             onOkClick = {
-                                viewModel.dismissDialog()
+                                mainViewModel.dismissDialog()
                                 multiplePermissionResultLauncher.launch(
                                     arrayOf(permission)
                                 )
 
                             },
-                            onGoToAppSettingsClick = ::openAppSettings
+                            onGoToAppSettingsClick = ::openAppSettings // Sends to app settings
 
                         )
                     }
 
+                // Initializes the Navigation controller and navigation bar
+                // In main activity so that it is present on all screens
                 val navController = rememberNavController()
                 NavigationBarScaffold(navController = navController)
+
+
             }
 
         }
     }
+
 }
 
+
+
+
+
+// Function that sends user to the app settings
 fun Activity.openAppSettings(){
     Intent(
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -138,12 +163,17 @@ fun Activity.openAppSettings(){
     ).also(::startActivity)
 }
 
+
+// Navigation Bar Composable.
+// Separate function to not bog down the set content block
+@RequiresApi(Build.VERSION_CODES.S)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationBarScaffold(navController: NavHostController) {
         Scaffold(
             topBar  = {
+                // Top Bar showing title of app
                 TopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -154,12 +184,14 @@ fun NavigationBarScaffold(navController: NavHostController) {
                     }
                 )
             },
+            // Major Navigation Bar Section
             bottomBar = {
                 BottomNavigationBar(
                     items = listOf(
+                        // The items on the bar that a user can click
                         BottomNavItem(
-                            name = "Home",
-                            route = Screen.HomeScreen.route,
+                            name = "Home", // Title
+                            route = Screen.HomeScreen.route, // Route that is sent to navController
                             icon = Icons.Default.Home,
 
                             ),
@@ -194,6 +226,7 @@ fun NavigationBarScaffold(navController: NavHostController) {
 
     }
 
+// UI of the bottom navigation bar. Colors, Icons, etc.
 @Composable
 fun BottomNavigationBar(
     items: List<BottomNavItem>,
@@ -251,10 +284,9 @@ fun BottomNavigationBar(
 fun DefaultPreview() {
     val navController = rememberNavController()
     MaterialTheme{
-        NavigationBarScaffold(navController = navController)
     }
-
 }
+
 
 
 

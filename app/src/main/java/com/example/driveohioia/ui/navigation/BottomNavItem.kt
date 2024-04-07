@@ -1,4 +1,4 @@
-package com.example.driveohioia
+package com.example.driveohioia.ui.navigation
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

@@ -25,6 +25,7 @@ constraintlayout = "2.1.4"
 navigationFragmentKtx = "2.7.7"
 roomCompiler = "2.6.1"
 roomKtx = "2.6.1"
+lifecycleRuntimeCompose = "2.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -71,6 +72,7 @@ materal = { module = "com.google.android.materal:materal", version.ref = "matera
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3WindowSize" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

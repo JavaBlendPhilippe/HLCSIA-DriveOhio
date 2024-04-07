@@ -89,6 +89,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.material3)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -163,4 +164,7 @@ dependencies {
 
     implementation("androidx.glance:glance:1.0.0")
 
+    implementation("com.google.accompanist:accompanist-permissions:0.35.0-alpha")
+
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 }
