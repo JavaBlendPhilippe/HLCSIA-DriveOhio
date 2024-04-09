@@ -192,7 +192,7 @@ fun NavigationBarScaffold(navController: NavHostController) {
                         BottomNavItem(
                             name = "Home", // Title
                             route = Screen.HomeScreen.route, // Route that is sent to navController
-                            icon = Icons.Default.Home,
+                            icon = Icons.Default.Home, //Icon that appears on the bar
 
                             ),
                         BottomNavItem(

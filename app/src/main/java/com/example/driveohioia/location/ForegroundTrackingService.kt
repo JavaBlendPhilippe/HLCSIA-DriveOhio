@@ -42,7 +42,6 @@ import timber.log.Timber
     Tracks the users location in the background of the app, shows it in a notification.
  */
 class ForegroundTrackingService: LifecycleService() {
-
     var isFirstRun = true
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
